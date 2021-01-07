@@ -7,10 +7,9 @@ from common.processing_json import write_data  # 写入json文件模块
 # from common import read_config
 
 
-excel_path = os.path.abspath(
-    os.path.dirname(os.path.dirname(__file__))) + '\\data_new' + '\\demo_api.xlsx'
+excel_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\data_new' + '\\demo_api.xlsx'
 
-json_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\case_generate' + '\\data_new'
+json_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\data_new' + '\\CMAPI_data.json'
 
 class AnalysisJson:
     '''swagger自动生成测试用例'''
@@ -26,7 +25,11 @@ class AnalysisJson:
         self.num = 1 #case id
         global title_list,json_path
         if self.check_data(r):
-            pass
+            self.json_path = os.path.abspath(
+                os.path.dirname(
+                    os.path.dirname(__file__))) + '\\data_new' + '\\{}_data.json'.format(
+                self.title)  # json file path，执行多个url的情况，区分生成的json文件
+            self.data = r['paths']  # paths中的数据是有用的
         self.data = r['paths']
 
     def check_data(self,r):
