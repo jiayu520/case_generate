@@ -5,7 +5,7 @@ from common.logger import Log  # 打印日志模块
 from common.processing_json import write_data  # 写入json文件模块
 # from common.difference import diff_excel, diff_json
 # from common import read_config
-
+title_list = []
 
 excel_path = os.path.abspath(os.path.dirname(os.path.dirname(__file__))) + '\\data_new' + '\\demo_api.xlsx'
 
@@ -21,6 +21,7 @@ class AnalysisJson:
         self.title = r['info']['title']
         write_data(r,'{}.json'.format(self.title)) #创建文件
         self.interface_params = {}
+        self.log = Log()
         self.row = 2 #写入Excel起始行数
         self.num = 1 #case id
         global title_list,json_path
@@ -29,8 +30,9 @@ class AnalysisJson:
                 os.path.dirname(
                     os.path.dirname(__file__))) + '\\data_new' + '\\{}_data.json'.format(
                 self.title)  # json file path，执行多个url的情况，区分生成的json文件
-            self.data = r['paths']  # paths中的数据是有用的
+            # self.data = r['paths']  # paths中的数据是有用的
         self.data = r['paths']
+        title_list.append(self.title)
 
     def check_data(self,r):
         '''检查返回的数据是否是字典'''
@@ -62,7 +64,7 @@ class AnalysisJson:
                 #else:
                  #   break
         if self.interface_params:
-            write_data(self.interface_params,self.json_path)
+            write_data(self.interface_params,self.json_path) #参数写入json文件
 
     def retrieve_excel(self,_v,interface,api):
         '''解析参数，拼接为字典--准备完成写入Excel的数据'''
@@ -136,7 +138,9 @@ class AnalysisJson:
             wt.write(interface['row_num'], 7, interface['headers'])
             wt.write(interface['row_num'], 8, interface['body'])
             wt.write(interface['row_num'], 10, interface['type'])
+            self.log.info('Interface case id {},write to excel file successfully!'.format(interface['id']))
         except Exception as e:
+            self.log.info('Failure of interface use case to write to excel file! error:{}\n'.format(e))
             return
 
 if __name__ == '__main__':
